@@ -2,6 +2,7 @@
 *.out
 *.o
 
-*.html
-*.js
-*.wasm
+# WebAssembly stuff
+ciphers.html
+ciphers.js
+ciphers.wasm
