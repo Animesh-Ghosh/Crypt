@@ -7,13 +7,13 @@
 
 // member definitions for Crypt
 Crypt::Crypt() : message("") {
-	std::cout << "Constructing Crypt with no message.\n";
+	// std::cout << "Constructing Crypt with no message.\n";
 }
 Crypt::Crypt(const std::string &message) : message(message) {
-	std::cout << "Constructing Crypt with message: " << message << '\n';
+	// std::cout << "Constructing Crypt with message: " << message << '\n';
 }
 Crypt::~Crypt() {
-	std::cout << "Destroying Crypt...\n";
+	// std::cout << "Destroying Crypt...\n";
 }
 
 // member definitions for CaesarCipher
@@ -32,7 +32,7 @@ unsigned int CaesarCipher::getIdx(const char &c) {
 CaesarCipher::CaesarCipher() : Crypt() {}
 CaesarCipher::CaesarCipher(const std::string &message) : Crypt(message) {}
 CaesarCipher::~CaesarCipher() {
-	std::cout << "Destroying CaesarCipher...\n";
+	// std::cout << "Destroying CaesarCipher...\n";
 }
 std::string CaesarCipher::Encrypt() {
 	if (message == "") {
@@ -61,14 +61,14 @@ std::string CaesarCipher::Decrypt() {
 
 // member definitions for CaesarCipherExt
 CaesarCipherExt::CaesarCipherExt() : CaesarCipher(), key(1u) {
-	std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
+	// std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
 }
 CaesarCipherExt::CaesarCipherExt(const std::string &message, unsigned int key)
 : CaesarCipher(message), key(key) {
-	std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
+	// std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
 }
 CaesarCipherExt::~CaesarCipherExt() {
-	std::cout << "Destroying CaesarCipherExt...\n";
+	// std::cout << "Destroying CaesarCipherExt...\n";
 }
 std::string CaesarCipherExt::Encrypt() {
 	if (message == "") {
@@ -120,7 +120,7 @@ RailFence::RailFence(const std::string &message) : Crypt(message) {
 	constructFences();
 }
 RailFence::~RailFence() {
-	std::cout << "Destroying RailFence...\n";
+	// std::cout << "Destroying RailFence...\n";
 }
 void RailFence::setMessage(const std::string &message) {
 	this->message = message;
@@ -209,7 +209,7 @@ MonoAlpha::MonoAlpha(const std::string &message) : Crypt(message) {
 	constructMaps();
 }
 MonoAlpha::~MonoAlpha() {
-	std::cout << "Destroying MonoAlpha...\n";
+	// std::cout << "Destroying MonoAlpha...\n";
 }
 void MonoAlpha::setMessage(const std::string &message) {
 	this->message = message;

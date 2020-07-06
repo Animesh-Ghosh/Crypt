@@ -13,22 +13,22 @@ Implement cryptographic ciphers and use them in a web-app them to encrypt/decryp
 Developed using MinGW toolchain for native build. For WebAssembly, use emscripten (64-bit).
 
 **Native:**
-```PowerShell
-.\mingw32-make run
+```pwsh
+make run
 ```
 
 **WebAssembly:**
 1. Activate emscripten
 2. Run:
-```PowerShell
-.\em++ --bind .\web-bindings.cpp .\ciphers.cpp -I. -std=c++11 -Wall -Wextra -pedantic -o ciphers.html
+```pwsh
+em++ --bind web-bindings.cpp ciphers.cpp -I. -std=c++11 -Wall -Wextra -pedantic -o ciphers.html
 ```
 *Note: You can specify em++ to either generate only the JS file which loads the WASM module or you can use Emscripten's generated HTML.*
 
 3. Serve the output files and play around with the API in the browser (either Node or Python's http.server module works).
 
 **For Python:**
-```PowerShell
+```pwsh
 python -m http.server --bind 127.0.0.1
 ```
 
@@ -44,3 +44,4 @@ cipher.Decrypt();  // "come home"
 **TODOs:**
 
 - [ ] Create an interface (probably with Vue.js)
+- [x] Write some tests

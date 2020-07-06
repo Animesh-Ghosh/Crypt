@@ -1,35 +1,38 @@
+# Makefile to compile and run tests
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall -Wextra -pedantic
-INCLUDE=-I.
-SRC=main.cpp ciphers.cpp
-OBJ=$(SRC:.cpp=.o)
-EXE=ciphers.exe
+INCLUDE=-I. -I./libs
+SRCS=test.cpp test_ciphers.cpp ciphers.cpp
+OBJS=$(SRCS:.cpp=.o)
+TEST=test.exe
 
-all: _all $(EXE)
+all: rebuild $(TEST)
 
-$(EXE): $(OBJ)
-	@echo Linking object files...
-	$(CXX) -o $@ $^
+$(TEST): $(OBJS)
+	@echo Linking files...
+	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE)
 
-%.o: %.cpp
-	@echo Compiling $<...
+test.o: test.cpp
+	@echo Compiling driver executable...
+	$(CXX) $^ -c -DTEST=1 $(CXXFLAGS) $(INCLUDE)
+
+test_ciphers.o: test_ciphers.cpp
+	@echo Compiling tests...
+	$(CXX) $^ -c -DTEST=1 $(CXXFLAGS) $(INCLUDE)
+
+ciphers.o: ciphers.cpp ciphers.hpp
+	@echo Compiling library...
 	$(CXX) $< -c $(CXXFLAGS) $(INCLUDE)
 
-.PHONY: _all clean build _rebuild rebuild run
-_all:
-	@echo Building project...
+# phony targets
+.PHONY: clean rebuild test
 
 clean:
-	@echo Deleting build...
-	del $(OBJ) $(EXE)
+	@echo Cleaning up object files and executable
+	@del *.o $(TEST)
 
-_rebuild:
-	@echo Rebuilding...
+rebuild: clean $(TEST)
 
-rebuild: _rebuild clean build
-
-build: all
-
-run: all
-	@echo Running project...
-	$(EXE)
+test: $(TEST)
+	@echo Running tests...
+	$(TEST)

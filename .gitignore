@@ -1,6 +1,7 @@
 *.exe
 *.out
 *.o
+libs
 
 # WebAssembly stuff
 ciphers.html
