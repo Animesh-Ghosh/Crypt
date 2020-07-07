@@ -1,9 +1,3 @@
-*.exe
-*.out
-*.o
-libs
-
-# WebAssembly stuff
-ciphers.html
-ciphers.js
-ciphers.wasm
+build/*
+lib/*
+bin/*

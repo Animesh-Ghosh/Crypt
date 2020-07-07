@@ -1,38 +1,39 @@
-# Makefile to compile and run tests
 CXX=g++
 CXXFLAGS=-std=c++11 -Wall -Wextra -pedantic
-INCLUDE=-I. -I./libs
-SRCS=test.cpp test_ciphers.cpp ciphers.cpp
-OBJS=$(SRCS:.cpp=.o)
-TEST=test.exe
+INCLUDE=-I./include -I./lib
+OBJS=build/test.o build/test_ciphers.o build/ciphers.o
+LIB=bin/libCrypt.a
+TEST=bin/test
 
-all: rebuild $(TEST)
+all: build/ciphers.o test
+	@echo Archiving library...
+	ar rcs $(LIB) $<
 
-$(TEST): $(OBJS)
-	@echo Linking files...
-	$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE)
-
-test.o: test.cpp
-	@echo Compiling driver executable...
-	$(CXX) $^ -c -DTEST=1 $(CXXFLAGS) $(INCLUDE)
-
-test_ciphers.o: test_ciphers.cpp
-	@echo Compiling tests...
-	$(CXX) $^ -c -DTEST=1 $(CXXFLAGS) $(INCLUDE)
-
-ciphers.o: ciphers.cpp ciphers.hpp
+build/ciphers.o: src/ciphers.cpp include/Crypt/ciphers.hpp
 	@echo Compiling library...
-	$(CXX) $< -c $(CXXFLAGS) $(INCLUDE)
+	$(CXX) -o $@ -c $< $(CXXFLAGS) $(INCLUDE)
 
-# phony targets
-.PHONY: clean rebuild test
+# rule for building tests executable
+$(TEST): $(OBJS)
+	@echo Building tests executable...
+	@$(CXX) -o $@ $^ $(CXXFLAGS) $(INCLUDE)
 
+# rule for building tests
+build/%.o: test/%.cpp
+	$(CXX) -o $@ -c $^ -DTEST=1 $(CXXFLAGS) $(INCLUDE)
+
+.PHONY: clean test _test lib
+
+# clean using platform specific del/rm command
 clean:
-	@echo Cleaning up object files and executable
-	@del *.o $(TEST)
+	@echo Cleaning up object files...
+	del build\\*.o
 
-rebuild: clean $(TEST)
-
-test: $(TEST)
+test: _test $(TEST)
 	@echo Running tests...
-	$(TEST)
+	@$(TEST)
+
+_test:
+	@echo Compiling tests...
+
+lib: $(LIB)

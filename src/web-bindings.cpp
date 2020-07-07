@@ -1,8 +1,9 @@
-#include <ciphers.hpp>
+#include <Crypt/ciphers.hpp>
 #include <emscripten/bind.h>
 
 using namespace emscripten;
 
+// JS bindings using emscripten toolchain
 EMSCRIPTEN_BINDINGS(my_module) {
 	class_<CaesarCipher>("CaesarCipher")
 		.constructor<const std::string&>()

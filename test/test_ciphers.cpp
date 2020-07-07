@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <BugEye/BugEye3.h>
-#include <ciphers.hpp>
+#include <Crypt/ciphers.hpp>
 
 static auto test = bugeye::test("Test for ciphers") = [] {
 	const std::string message = R"(a very long test message...

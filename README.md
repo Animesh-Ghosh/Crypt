@@ -6,7 +6,7 @@ Implement cryptographic ciphers and use them in a web-app them to encrypt/decryp
 
 **Ciphers implemented currently cannot be used to decrypt a given cipher text. Currently only encrypting plain-text and getting back the plain-text works.**
 
-*Prerequisites: Need a C++11 compliant compiler and Emscripten toolchain. You can get the Emscripten toolchain from [here](https://github.com/emscripten-core/emsdk).*
+*Prerequisites: Need a C++11 compliant compiler (and related toolchain) and Emscripten toolchain. You can get the Emscripten toolchain from [here](https://github.com/emscripten-core/emsdk).*
 
 ## Building and Running
 
@@ -14,7 +14,7 @@ Developed using MinGW toolchain for native build. For WebAssembly, use emscripte
 
 **Native:**
 ```pwsh
-make run
+make
 ```
 
 **WebAssembly:**
