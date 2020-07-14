@@ -5,29 +5,39 @@
 #include <BugEye/BugEye3.h>
 #include <Crypt/ciphers.hpp>
 
-static auto test = bugeye::test("Test for ciphers") = [] {
+static const unsigned int TESTS = 100;
+
+static auto test = bugeye::test("Test for ciphers").plan(TESTS * 4) = [] {
 	const std::string message = R"(a very long test message...
 so long that infact it can't be deciphered!)";
+	std::unique_ptr<Crypt> cipher;
 
-	std::cout << "Testing CaesarCipher:\n";
-	std::unique_ptr<Crypt> cipher(new CaesarCipher(message));
-	cipher->Encrypt();
-	IS(cipher->Decrypt(), message);
+	for (unsigned int i = 0; i < TESTS; ++i) {
+		bugeye::subtest("Sub-test for CaesarCipher") = [&] {
+			cipher = std::unique_ptr<Crypt>(new CaesarCipher(message));
+			cipher->Encrypt();
+			IS(cipher->Decrypt(), message);
+		};
 
-	std::cout << "Testing CaesarCipherExt:\n";
-	for (unsigned int i = 1; i <= 26; ++i) {
-		cipher = std::unique_ptr<Crypt>(new CaesarCipherExt(message, 5));
-		cipher->Encrypt();
-		IS(cipher->Decrypt(), message);
+		const unsigned int maxOffset = 26;
+		bugeye::subtest("Sub-test for CaesarCipherExt").plan(maxOffset) = [&] {
+			for (unsigned int i = 1; i <= maxOffset; ++i) {
+				cipher = std::unique_ptr<Crypt>(new CaesarCipherExt(message, i));
+				cipher->Encrypt();
+				IS(cipher->Decrypt(), message);
+			}
+		};
+
+		bugeye::subtest("Sub-test for RailFence") = [&] {
+			cipher = std::unique_ptr<Crypt>(new RailFence(message));
+			cipher->Encrypt();
+			IS(cipher->Decrypt(), message);
+		};
+
+		bugeye::subtest("Sub-test for MonoAlpha") = [&] {
+			cipher = std::unique_ptr<Crypt>(new MonoAlpha(message));
+			cipher->Encrypt();
+			IS(cipher->Decrypt(), message);
+		};
 	}
-
-	std::cout << "Testing RailFence cipher:\n";
-	cipher = std::unique_ptr<Crypt>(new RailFence(message));
-	cipher->Encrypt();
-	IS(cipher->Decrypt(), message);
-
-	std::cout << "Testing MonoAlpha cipher:\n";
-	cipher = std::unique_ptr<Crypt>(new MonoAlpha(message));
-	cipher->Encrypt();
-	IS(cipher->Decrypt(), message);
 };

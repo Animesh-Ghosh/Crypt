@@ -3,18 +3,13 @@
 #include <chrono>
 #include <random>
 
+#include "debug.hpp"
 #include <Crypt/ciphers.hpp>
 
 // member definitions for Crypt
-Crypt::Crypt() : message("") {
-	// std::cout << "Constructing Crypt with no message.\n";
-}
-Crypt::Crypt(const std::string &message) : message(message) {
-	// std::cout << "Constructing Crypt with message: " << message << '\n';
-}
-Crypt::~Crypt() {
-	// std::cout << "Destroying Crypt...\n";
-}
+Crypt::Crypt() : message("") {}
+Crypt::Crypt(const std::string &message) : message(message) {}
+Crypt::~Crypt() {}
 
 // member definitions for CaesarCipher
 const std::array<char, 26> CaesarCipher::alphabets = {
@@ -31,9 +26,7 @@ unsigned int CaesarCipher::getIdx(const char &c) {
 }
 CaesarCipher::CaesarCipher() : Crypt() {}
 CaesarCipher::CaesarCipher(const std::string &message) : Crypt(message) {}
-CaesarCipher::~CaesarCipher() {
-	// std::cout << "Destroying CaesarCipher...\n";
-}
+CaesarCipher::~CaesarCipher() {}
 std::string CaesarCipher::Encrypt() {
 	if (message == "") {
 		return "No message to encrypt!";
@@ -60,16 +53,10 @@ std::string CaesarCipher::Decrypt() {
 }
 
 // member definitions for CaesarCipherExt
-CaesarCipherExt::CaesarCipherExt() : CaesarCipher(), key(1u) {
-	// std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
-}
+CaesarCipherExt::CaesarCipherExt() : CaesarCipher(), key(1u) {}
 CaesarCipherExt::CaesarCipherExt(const std::string &message, unsigned int key)
-: CaesarCipher(message), key(key) {
-	// std::cout << "Constructing CaesarCipherExt with key: " << key << '\n';
-}
-CaesarCipherExt::~CaesarCipherExt() {
-	// std::cout << "Destroying CaesarCipherExt...\n";
-}
+: CaesarCipher(message), key(key) {}
+CaesarCipherExt::~CaesarCipherExt() {}
 std::string CaesarCipherExt::Encrypt() {
 	if (message == "") {
 		return "No message to encrypt!";
@@ -95,15 +82,6 @@ std::string CaesarCipherExt::Decrypt() {
 	return message;
 }
 
-// operator overloads for debug purposes
-template<typename T>
-std::ostream& operator<<(std::ostream &os, const std::vector<T> &v) {
-	for (const T &x : v) {
-		os << x << ' ';
-	}
-	return os;
-}
-
 // member definitions for RailFence
 void RailFence::constructFences() {
 	for (unsigned int i = 0; i < message.size(); ++i) {
@@ -119,9 +97,7 @@ RailFence::RailFence() : Crypt() {}
 RailFence::RailFence(const std::string &message) : Crypt(message) {
 	constructFences();
 }
-RailFence::~RailFence() {
-	// std::cout << "Destroying RailFence...\n";
-}
+RailFence::~RailFence() {}
 void RailFence::setMessage(const std::string &message) {
 	this->message = message;
 	constructFences();
@@ -157,22 +133,6 @@ std::string RailFence::Decrypt() {
 	return message;
 }
 
-template<typename T>
-std::ostream& operator<<(std::ostream &os, const std::set<T> &s) {
-	std::for_each(s.begin(), s.end(), [&](const T &x) {
-		os << x << ' ';
-	});
-	return os;
-}
-
-template<typename key, typename value>
-std::ostream& operator<<(std::ostream &os, const std::map<key, value> &map) {
-	for (auto it = map.begin(); it != map.end(); ++it) {
-		os << it->first << " -> " << it->second << '\n';
-	}
-	return os;
-}
-
 // member definitions for MonoAlpha
 const std::set<char> MonoAlpha::alphabets = {
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
@@ -182,7 +142,6 @@ void MonoAlpha::constructMaps() {
 	using clock = std::chrono::system_clock;
 	unsigned seed = clock::now().time_since_epoch().count();
 	std::default_random_engine generator(seed);
-	std::set<char> assignedChars;
 	for (const char& c : alphabets) {
 		const std::set<char> currentChar = { c };
 		std::vector<char> difference(alphabets.size());
@@ -194,14 +153,21 @@ void MonoAlpha::constructMaps() {
 		difference.resize(it - difference.begin());
 		std::uniform_int_distribution<int> distribution(0, difference.size() - 1);
 		char replacement = difference[distribution(generator)];
-		if (charMap.size() > 0) {
-			while (assignedChars.count(replacement) != 0) {
-				replacement = difference[distribution(generator)];
+		if (charMap.size()) {
+			// problem occurs when 'z' is not in charMap or reverseCharMap by the end
+			if (c == 'z' && !reverseCharMap.count('z')) {
+				const char oldReplacement = reverseCharMap[replacement];
+				charMap[oldReplacement] = 'z';
+				reverseCharMap['z'] = oldReplacement;
+			}
+			else {
+				while (reverseCharMap.count(replacement)) {
+					replacement = difference[distribution(generator)];
+				}
 			}
 		}
 		charMap[c] = replacement;
 		reverseCharMap[replacement] = c;
-		assignedChars.insert(replacement);
 	}
 }
 MonoAlpha::MonoAlpha() : Crypt() {}
@@ -209,7 +175,6 @@ MonoAlpha::MonoAlpha(const std::string &message) : Crypt(message) {
 	constructMaps();
 }
 MonoAlpha::~MonoAlpha() {
-	// std::cout << "Destroying MonoAlpha...\n";
 }
 void MonoAlpha::setMessage(const std::string &message) {
 	this->message = message;
