@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="author" content="Animesh-Ghosh"/>
+  <meta name="description" content="WASM using Emscripten"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" type="text/css" href="./crypt.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" defer=""></script>
+  <title>Crypt</title>
+</head>
+<body>
+  <header>
+    <h1>Crypt on the Web</h1>
+  </header>
+  <main>
+    <div id="app">
+      <h2 v-if="wasmModuleLoaded">Crypt WASM module loaded!</h2>
+      <section>
+        <form>
+          <section>
+            <select v-model="selectedCipher">
+              <option v-for="cipher of ciphers"
+              :key="cipher.id"
+              >
+                {{ cipher.name }}
+              </option>
+            </select>
+            <input v-if="selectedCipher == 'CaesarCipherExt'"
+            type="number"
+            v-model.number="caesarCipherExtKey"
+            min="1">
+          </section>
+          <textarea v-model="message"></textarea>
+        </form>
+      </section>
+      <section v-if="encryptedMessage">
+        <p>Time taken: {{ timeTaken }}ms</p>
+        <p>Encrypted {{ numberOfWords }} characters</p>
+        <pre v-html="encryptedMessage"></pre>
+      </section>
+    </div>
+  </main>
+  <script type="text/javascript" src="./crypt.js" defer=""></script>
+  <script type="text/javascript" src="./bin/ciphers.js" defer=""></script>
+</body>
+</html>

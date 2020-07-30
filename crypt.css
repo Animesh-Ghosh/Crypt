@@ -1,0 +1,27 @@
+*, ::before, ::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 16px;
+}
+
+form {
+  width: 80%;
+  display: flex;
+  flex-flow: column;
+}
+
+form textarea {
+  resize: none;
+  width: 80ch;
+  height: 10rem;
+}
+
+pre {
+  overflow: auto;
+  width: 80ch;
+  height: 10rem;
+}

@@ -43,5 +43,5 @@ cipher.Decrypt();  // "come home"
 
 **TODOs:**
 
-- [ ] Create an interface (probably with Vue.js)
+- [x] Create an interface (probably with Vue.js)
 - [x] Write some tests
